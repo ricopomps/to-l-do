@@ -1,4 +1,4 @@
-import { selectedNoteAtom } from '@renderer/store'
+import { selectedNoteAtom } from '@renderer/store/note'
 import { cn } from '@renderer/utils'
 import { useAtomValue } from 'jotai'
 import { ComponentProps } from 'react'

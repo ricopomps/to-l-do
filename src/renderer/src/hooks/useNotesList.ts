@@ -1,4 +1,4 @@
-import { notesAtom, selectedNoteIndexAtom } from '@renderer/store'
+import { notesAtom, selectedNoteIndexAtom } from '@renderer/store/note'
 import { useAtom, useAtomValue } from 'jotai'
 
 export default function useNotesList({ onSelect }: { onSelect?: () => void }) {

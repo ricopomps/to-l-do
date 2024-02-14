@@ -1,13 +1,13 @@
-import { createEmptyNoteAtom } from '@renderer/store/note'
+import { createEmptyToDoAtom } from '@renderer/store/todo'
 import { useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import ActionButton, { ActionButtonProps } from './ActionButton'
 
-export default function NewNoteButton({ ...props }: ActionButtonProps) {
-  const createEmptyNote = useSetAtom(createEmptyNoteAtom)
+export default function NewToDoButton({ ...props }: ActionButtonProps) {
+  const createEmptyToDo = useSetAtom(createEmptyToDoAtom)
 
   const handleCreate = async () => {
-    await createEmptyNote()
+    await createEmptyToDo('New cara')
   }
   return (
     <ActionButton {...props} onClick={handleCreate}>

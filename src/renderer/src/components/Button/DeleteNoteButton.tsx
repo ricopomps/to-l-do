@@ -1,4 +1,4 @@
-import { deleteNoteAtom } from '@renderer/store'
+import { deleteNoteAtom } from '@renderer/store/note'
 import { useSetAtom } from 'jotai'
 import { Trash2 } from 'lucide-react'
 import ActionButton, { ActionButtonProps } from './ActionButton'
