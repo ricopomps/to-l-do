@@ -1,8 +1,8 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { GetNotes, ReadNote, WriteNote } from '@shared/types'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { GetNotes, ReadNote, WriteNote } from '../shared/types'
 import { getNotes, readNote, writeNote } from './lib'
 
 function createWindow(): void {

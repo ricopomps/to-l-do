@@ -1,12 +1,12 @@
+import ActionButtonsRow from '@/components/ActionButtonsRow'
+import Content from '@/components/AppLayout/Content'
+import RootLayout from '@/components/AppLayout/RootLayout'
+import Sidebar from '@/components/AppLayout/Sidebar'
+import DraggableTopBar from '@/components/DraggableTopBar'
+import FloatingNoteTitle from '@/components/FloatingNoteTitle'
+import MarkdownEditor from '@/components/MarkdownEditor'
+import NotePreviewList from '@/components/NotePreviewList'
 import { useRef } from 'react'
-import ActionButtonsRow from './components/ActionButtonsRow'
-import Content from './components/AppLayout/Content'
-import RootLayout from './components/AppLayout/RootLayout'
-import Sidebar from './components/AppLayout/Sidebar'
-import DraggableTopBar from './components/DraggableTopBar'
-import FloatingNoteTitle from './components/FloatingNoteTitle'
-import MarkdownEditor from './components/MarkdownEditor'
-import NotePreviewList from './components/NotePreviewList'
 
 function App(): JSX.Element {
   const contentConainerRef = useRef<HTMLDivElement>(null)
