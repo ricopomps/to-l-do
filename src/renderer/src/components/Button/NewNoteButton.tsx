@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import ActionButton, { ActionButtonProps } from './ActionButton'
 
-export default function NewToDoButton({ ...props }: ActionButtonProps) {
+export default function NewNoteButton({ ...props }: ActionButtonProps) {
   const createEmptyNote = useSetAtom(createEmptyNoteAtom)
 
   const handleCreate = async () => {

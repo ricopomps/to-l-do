@@ -3,11 +3,11 @@ import { useSetAtom } from 'jotai'
 import { Trash2 } from 'lucide-react'
 import ActionButton, { ActionButtonProps } from './ActionButton'
 
-export default function DeleteToDoButton({ ...props }: ActionButtonProps) {
+export default function DeleteNoteButton({ ...props }: ActionButtonProps) {
   const deleteNote = useSetAtom(deleteNoteAtom)
 
-  const handleDelete = () => {
-    deleteNote()
+  const handleDelete = async () => {
+    await deleteNote()
   }
   return (
     <ActionButton {...props} onClick={handleDelete}>
