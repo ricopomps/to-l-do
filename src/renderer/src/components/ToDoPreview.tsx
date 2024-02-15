@@ -1,8 +1,12 @@
-import { toggleCollapseToDoAtom, toggleCompletedToDoAtom } from '@renderer/store/todo'
+import {
+  createChildrenToDoAtom,
+  toggleCollapseToDoAtom,
+  toggleCompletedToDoAtom
+} from '@renderer/store/todo'
 import { cn } from '@renderer/utils'
 import { ToDo } from '@shared/models/todo'
 import { useSetAtom } from 'jotai'
-import { Badge, BadgeCheck, ChevronDownCircle, ChevronUpCircle } from 'lucide-react'
+import { Badge, BadgeCheck, ChevronDownCircle, ChevronUpCircle, PlusCircle } from 'lucide-react'
 import { ComponentProps } from 'react'
 
 type ToDoProps = {
@@ -13,6 +17,7 @@ type ToDoProps = {
 export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoProps) {
   const toggleCollapseToDo = useSetAtom(toggleCollapseToDoAtom)
   const toggleCompletedToDo = useSetAtom(toggleCompletedToDoAtom)
+  const createChildrenToDo = useSetAtom(createChildrenToDoAtom)
 
   return (
     <div
@@ -28,15 +33,21 @@ export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoPr
     >
       <div className="flex gap-2">
         <div onClick={() => toggleCompletedToDo(toDo._id)}>
-          {toDo.completed ? <BadgeCheck /> : <Badge />}
+          {toDo.completed ? <BadgeCheck className="text-blue-400" /> : <Badge />}
         </div>
         <h3 className="font-bold truncate">{toDo.title}</h3>
       </div>
-      {toDo.children && toDo.children.length > 0 && (
-        <div onClick={() => toggleCollapseToDo(toDo._id)}>
-          {toDo.colapsed ? <ChevronUpCircle /> : <ChevronDownCircle />}
-        </div>
-      )}
+      <div className="flex gap-3">
+        <PlusCircle
+          onClick={() => createChildrenToDo(toDo._id, 'child')}
+          className="text-green-300"
+        />
+        {toDo.children && toDo.children.length > 0 && (
+          <div onClick={() => toggleCollapseToDo(toDo._id)}>
+            {toDo.colapsed ? <ChevronUpCircle /> : <ChevronDownCircle />}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

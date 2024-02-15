@@ -2,6 +2,7 @@ import { ToDo } from '@shared/models/todo'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
 import { toDoMock } from '../mocks'
+import { completeAll, createNewToDo, mapToDoList } from './utils'
 
 const loadToDos = async () => {
   const notes = toDoMock
@@ -24,14 +25,7 @@ export const createEmptyToDoAtom = atom(null, async (get, set, toDoTitle: ToDo['
 
   if (!title) return
 
-  const newToDo: ToDo = {
-    _id: toDoTitle,
-    title,
-    lastEditTime: Date.now(),
-    children: [],
-    colapsed: false,
-    completed: false
-  }
+  const newToDo = createNewToDo(title)
 
   set(toDosAtom, [newToDo, ...toDos])
 })
@@ -57,21 +51,6 @@ const emptyToDo: ToDo = {
 
 export const selectedToDoAtom = unwrap(selectedToDoAtomAsync, (prev) => prev ?? emptyToDo)
 
-const mapToDoList = (
-  toDos: ToDo[],
-  selectedToDoIndex: string,
-  updateToDo: (toDo: ToDo) => ToDo
-): ToDo[] => {
-  return toDos.map((toDo) => {
-    if (toDo._id === selectedToDoIndex) {
-      return updateToDo(toDo)
-    } else if (toDo.children) {
-      return { ...toDo, children: mapToDoList(toDo.children, selectedToDoIndex, updateToDo) }
-    }
-    return toDo
-  })
-}
-
 export const toggleCollapseToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
   const toDos = get(toDosAtom)
 
@@ -83,14 +62,6 @@ export const toggleCollapseToDoAtom = atom(null, (get, set, selectedToDoIndex: s
 
   set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
 })
-
-const completeAll = (toDos: ToDo[]) => {
-  return toDos.map((toDo) => ({
-    ...toDo,
-    completed: true,
-    children: toDo.children && completeAll(toDo.children)
-  }))
-}
 
 export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
   const toDos = get(toDosAtom)
@@ -107,3 +78,24 @@ export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: 
 
   set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
 })
+
+export const createChildrenToDoAtom = atom(
+  null,
+  (get, set, selectedToDoIndex: string, title: string) => {
+    const toDos = get(toDosAtom)
+
+    if (!toDos) return
+
+    const newToDo = createNewToDo(title)
+
+    const updateToDo = (toDo: ToDo) => {
+      return {
+        ...toDo,
+        children: [newToDo, ...(toDo.children ?? [])],
+        ...(toDo.colapsed && { colapsed: false })
+      }
+    }
+
+    set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+  }
+)

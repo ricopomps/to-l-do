@@ -1,4 +1,5 @@
 import { ToDo } from '@shared/models/todo'
+import mongoose from 'mongoose'
 import { NoteInfo } from 'src/shared/models/note'
 
 export const notesMock: NoteInfo[] = [
@@ -22,31 +23,31 @@ export const notesMock: NoteInfo[] = [
 
 export const toDoMock: ToDo[] = [
   {
-    _id: '1',
+    _id: new mongoose.Types.ObjectId().toString(),
     completed: false,
     lastEditTime: new Date().getTime(),
     title: 'Ração de Melu'
   },
   {
-    _id: '2',
+    _id: new mongoose.Types.ObjectId().toString(),
     completed: false,
     lastEditTime: new Date().getTime(),
     title: 'Lavar louça',
     children: [
       {
-        _id: '6',
+        _id: new mongoose.Types.ObjectId().toString(),
         completed: false,
         lastEditTime: new Date().getTime(),
         title: 'Lavar prato'
       },
       {
-        _id: '7',
+        _id: new mongoose.Types.ObjectId().toString(),
         completed: true,
         lastEditTime: new Date().getTime(),
         title: 'Lavar copo'
       },
       {
-        _id: '8',
+        _id: new mongoose.Types.ObjectId().toString(),
         completed: true,
         lastEditTime: new Date().getTime(),
         title: 'Lavar talher'
@@ -54,35 +55,35 @@ export const toDoMock: ToDo[] = [
     ]
   },
   {
-    _id: '3',
+    _id: new mongoose.Types.ObjectId().toString(),
     completed: false,
     lastEditTime: new Date().getTime(),
     title: 'Estudar',
     colapsed: true
   },
   {
-    _id: '4',
+    _id: new mongoose.Types.ObjectId().toString(),
     completed: true,
     lastEditTime: new Date().getTime(),
     title: 'Caminhar',
     colapsed: false,
     children: [
       {
-        _id: '9',
+        _id: new mongoose.Types.ObjectId().toString(),
         completed: true,
         lastEditTime: new Date().getTime(),
         title: 'Volta interna',
         colapsed: false,
         children: [
           {
-            _id: '10',
+            _id: new mongoose.Types.ObjectId().toString(),
             completed: true,
             lastEditTime: new Date().getTime(),
             title: 'Volta externa',
             colapsed: true,
             children: [
               {
-                _id: '11',
+                _id: new mongoose.Types.ObjectId().toString(),
                 completed: true,
                 lastEditTime: new Date().getTime(),
                 title: 'Volta ambos',
@@ -96,7 +97,7 @@ export const toDoMock: ToDo[] = [
     ]
   },
   {
-    _id: '5',
+    _id: new mongoose.Types.ObjectId().toString(),
     completed: true,
     lastEditTime: new Date().getTime(),
     title: 'Regar as plantas'

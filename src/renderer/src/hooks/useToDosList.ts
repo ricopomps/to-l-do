@@ -6,7 +6,6 @@ export default function useToDosList({ onSelect }: { onSelect?: () => void }) {
   const [selectedToDoIndex, setSelectedToDoIndex] = useAtom(selectedToDoIndexAtom)
 
   const handleToDoselect = (index: string) => async () => {
-    console.log('handleToDoselect', index)
     setSelectedToDoIndex(index)
 
     if (onSelect) {
