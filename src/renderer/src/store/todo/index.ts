@@ -35,3 +35,75 @@ export const createEmptyToDoAtom = atom(null, async (get, set, toDoTitle: ToDo['
 
   set(toDosAtom, [newToDo, ...toDos])
 })
+
+const selectedToDoAtomAsync = atom(async (get) => {
+  const toDos = get(toDosAtom)
+  const selectedToDoIndex = get(selectedToDoIndexAtom)
+
+  if (selectedToDoIndex === null || !toDos) return null
+
+  const selectedToDo = toDos.find((toDo) => toDo._id === selectedToDoIndex)
+
+  if (!selectedToDo) return null
+
+  return selectedToDo
+})
+
+const emptyToDo: ToDo = {
+  _id: '',
+  title: '',
+  lastEditTime: Date.now()
+}
+
+export const selectedToDoAtom = unwrap(selectedToDoAtomAsync, (prev) => prev ?? emptyToDo)
+
+const mapToDoList = (
+  toDos: ToDo[],
+  selectedToDoIndex: string,
+  updateToDo: (toDo: ToDo) => ToDo
+): ToDo[] => {
+  return toDos.map((toDo) => {
+    if (toDo._id === selectedToDoIndex) {
+      return updateToDo(toDo)
+    } else if (toDo.children) {
+      return { ...toDo, children: mapToDoList(toDo.children, selectedToDoIndex, updateToDo) }
+    }
+    return toDo
+  })
+}
+
+export const toggleCollapseToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
+  const toDos = get(toDosAtom)
+
+  if (!toDos) return
+
+  const updateToDo = (toDo: ToDo) => {
+    return { ...toDo, colapsed: !toDo.colapsed }
+  }
+
+  set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+})
+
+const completeAll = (toDos: ToDo[]) => {
+  return toDos.map((toDo) => ({
+    ...toDo,
+    completed: true,
+    children: toDo.children && completeAll(toDo.children)
+  }))
+}
+
+export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
+  const toDos = get(toDosAtom)
+
+  if (!toDos) return
+
+  const updateToDo = (toDo: ToDo) => {
+    return {
+      ...toDo,
+      completed: !toDo.completed,
+      ...(toDo.children && !toDo.completed && { children: completeAll(toDo.children) })
+    }
+  }
+
+  set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+})
