@@ -26,7 +26,7 @@ function ToDoWithChild({ toDo }: ToDoWithChildProps) {
   const { selectedToDoIndex, handleToDoselect } = useToDosList({})
 
   return (
-    <>
+    <div className="md:pl-8 lg:pl-16">
       <ToDoPreview
         toDo={toDo}
         isActive={selectedToDoIndex === toDo._id}
@@ -41,6 +41,6 @@ function ToDoWithChild({ toDo }: ToDoWithChildProps) {
           ))}
         </div>
       )}
-    </>
+    </div>
   )
 }
