@@ -1,19 +1,28 @@
 import { cn } from '@renderer/utils'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Input from '../Input'
 
 interface InputModalProps {
   isOpen: boolean
   onClose: () => void
+  onAccept: (input: string) => void
 }
 
-export default function InputModal({ isOpen, onClose }: InputModalProps) {
+export default function InputModal({ isOpen, onClose, onAccept }: InputModalProps) {
   const [input, setInput] = useState('')
 
   const closeModal = () => {
     onClose()
     setInput('')
   }
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current && isOpen) {
+      inputRef.current.focus()
+    }
+  }, [isOpen])
 
   return (
     <div className={cn('fixed z-10 inset-0 overflow-y-auto', isOpen ? 'block' : 'hidden')}>
@@ -46,7 +55,7 @@ export default function InputModal({ isOpen, onClose }: InputModalProps) {
                   <p className="text-sm text-center text-white">Write the title of your to do</p>
                 </div>
                 <div className="flex p-2 justify-center items-center">
-                  <Input value={input} onChange={(e) => setInput(e.target.value)} />
+                  <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} />
                 </div>
               </div>
             </div>
@@ -60,9 +69,13 @@ export default function InputModal({ isOpen, onClose }: InputModalProps) {
               Cancel
             </button>
             <button
-              onClick={closeModal}
+              onClick={() => {
+                onAccept(input)
+                onClose()
+              }}
+              disabled={!input}
               type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-zinc-200/50 text-base font-medium text-white hover:bg-zinc-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-700  sm:w-auto sm:text-sm"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-zinc-200/50 text-base font-medium text-white hover:bg-zinc-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-700  sm:w-auto sm:text-sm disabled:opacity-50 disabled:hover:bg-zinc-200/50 disabled:cursor-not-allowed"
             >
               Create
             </button>

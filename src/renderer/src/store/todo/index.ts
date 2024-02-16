@@ -81,10 +81,10 @@ export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: 
 
 export const createChildrenToDoAtom = atom(
   null,
-  (get, set, selectedToDoIndex: string, title: string) => {
+  (get, set, selectedToDoIndex: string, title: ToDo['title']) => {
     const toDos = get(toDosAtom)
 
-    if (!toDos) return
+    if (!toDos || !title) return
 
     const newToDo = createNewToDo(title)
 
