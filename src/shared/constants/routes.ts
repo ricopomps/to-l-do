@@ -1,4 +1,4 @@
 export enum RoutesPaths {
-  notes = '/',
-  todo = '/todo'
+  notes = '/notes',
+  todo = '/'
 }
