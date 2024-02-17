@@ -16,6 +16,12 @@ export default function InputModal({ isOpen, onClose, onAccept }: InputModalProp
     setInput('')
   }
 
+  const handleAccept = () => {
+    onAccept(input)
+    onClose()
+    setInput('')
+  }
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -69,10 +75,7 @@ export default function InputModal({ isOpen, onClose, onAccept }: InputModalProp
               Cancel
             </button>
             <button
-              onClick={() => {
-                onAccept(input)
-                onClose()
-              }}
+              onClick={handleAccept}
               disabled={!input}
               type="button"
               className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-zinc-200/50 text-base font-medium text-white hover:bg-zinc-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-700  sm:w-auto sm:text-sm disabled:opacity-50 disabled:hover:bg-zinc-200/50 disabled:cursor-not-allowed"
