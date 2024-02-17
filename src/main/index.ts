@@ -3,7 +3,7 @@ import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/t
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { createNote, deleteNote, getNotes, readNote, writeNote } from './lib'
+import NotesService, { INotesService } from './services/notesService'
 
 function createWindow(): void {
   // Create the browser window.
@@ -60,11 +60,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => getNotes(...args))
-  ipcMain.handle('readNote', (_, ...args: Parameters<ReadNote>) => readNote(...args))
-  ipcMain.handle('writeNote', (_, ...args: Parameters<WriteNote>) => writeNote(...args))
-  ipcMain.handle('createNote', (_, ...args: Parameters<CreateNote>) => createNote(...args))
-  ipcMain.handle('deleteNote', (_, ...args: Parameters<DeleteNote>) => deleteNote(...args))
+  notesRoutesConfig(ipcMain)
 
   createWindow()
 
@@ -86,3 +82,19 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+const notesRoutesConfig = (ipcMain: Electron.IpcMain) => {
+  const notesService: INotesService = new NotesService()
+
+  ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => notesService.getNotes(...args))
+  ipcMain.handle('readNote', (_, ...args: Parameters<ReadNote>) => notesService.readNote(...args))
+  ipcMain.handle('writeNote', (_, ...args: Parameters<WriteNote>) =>
+    notesService.writeNote(...args)
+  )
+  ipcMain.handle('createNote', (_, ...args: Parameters<CreateNote>) =>
+    notesService.createNote(...args)
+  )
+  ipcMain.handle('deleteNote', (_, ...args: Parameters<DeleteNote>) =>
+    notesService.deleteNote(...args)
+  )
+}
