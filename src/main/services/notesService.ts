@@ -32,9 +32,6 @@ export default class NotesService implements INotesService {
   }
 
   async getNotes() {
-    if (!this.fileService) {
-      this.fileService = new FileService()
-    }
     const notesDir = await this.fileService.getNotesDir()
 
     const notesFilesNames = await this.fileService.getFilesNames(notesDir)

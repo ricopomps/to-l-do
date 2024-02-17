@@ -3,7 +3,7 @@ import { unwrap } from 'jotai/utils'
 import { NoteContent, NoteInfo } from 'src/shared/models/note'
 
 const loadNotes = async () => {
-  const notes = await window.context.getNotes()
+  const notes = await window.context.notesApi.getNotes()
 
   return notes.sort((a, b) => b.lastEditTime - a.lastEditTime)
 }
@@ -22,7 +22,7 @@ const selectedNoteAtomAsync = atom(async (get) => {
 
   const selectedNote = notes[selectedNoteIndex]
 
-  const noteContent = await window.context.readNote(selectedNote.title)
+  const noteContent = await window.context.notesApi.readNote(selectedNote.title)
 
   return {
     ...selectedNote,
@@ -45,7 +45,7 @@ export const saveNoteAtom = atom(null, async (get, set, newContent: NoteContent)
   if (!selectedNote || !notes) return
 
   // save on disk
-  await window.context.writeNote(selectedNote.title, newContent)
+  await window.context.notesApi.writeNote(selectedNote.title, newContent)
 
   // update the saved note's last edit time
   set(
@@ -61,7 +61,7 @@ export const createEmptyNoteAtom = atom(null, async (get, set) => {
 
   if (!notes) return
 
-  const title = await window.context.createNote()
+  const title = await window.context.notesApi.createNote()
 
   if (!title) return
 
@@ -81,7 +81,7 @@ export const deleteNoteAtom = atom(null, async (get, set) => {
 
   if (!selectedNote || !notes) return
 
-  const isDeleted = await window.context.deleteNote(selectedNote.title)
+  const isDeleted = await window.context.notesApi.deleteNote(selectedNote.title)
 
   if (!isDeleted) return
 

@@ -4,7 +4,7 @@ import {
   notesDirectoryName,
   toDosDirectoryName
 } from '@shared/constants'
-import { Stats, ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
+import { Stats, ensureDir, readFile, readJson, readdir, remove, stat, writeFile } from 'fs-extra'
 import { homedir } from 'os'
 
 export interface IFileService {
@@ -16,6 +16,7 @@ export interface IFileService {
   writeFile(directory: string, filename: string, content: string): Promise<void>
   deleteFile(directory: string, filename: string): Promise<void>
   getFileStats(directory: string, filename: string): Promise<Stats>
+  readJsonFile<T>(directory: string, filename: string): Promise<T>
 }
 
 export default class FileService implements IFileService {
@@ -70,5 +71,12 @@ export default class FileService implements IFileService {
 
   async getFileStats(directory: string, filename: string): Promise<Stats> {
     return await stat(`${directory}/${filename}`)
+  }
+
+  async readJsonFile<T>(directory: string, filename: string): Promise<T> {
+    const json: T = await readJson(`${directory}/${filename}`, {
+      encoding: fileEncoding
+    })
+    return json
   }
 }

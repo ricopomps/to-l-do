@@ -1,9 +1,17 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/types'
+import {
+  CreateNote,
+  DeleteNote,
+  GetNotes,
+  GetToDosWorkspaces,
+  ReadNote,
+  WriteNote
+} from '@shared/types'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import NotesService, { INotesService } from './services/notesService'
+import ToDosService, { IToDosService } from './services/toDosService'
 
 function createWindow(): void {
   // Create the browser window.
@@ -61,6 +69,7 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   notesRoutesConfig(ipcMain)
+  toDosRoutesConfig(ipcMain)
 
   createWindow()
 
@@ -82,19 +91,42 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+enum NotesRoutes {
+  GET_NOTES = 'getNotes',
+  READ_NOTE = 'readNote',
+  WRITE_NOTE = 'writeNote',
+  CREATE_NOTE = 'createNote',
+  DELETE_NOTE = 'deleteNote'
+}
 
 const notesRoutesConfig = (ipcMain: Electron.IpcMain) => {
   const notesService: INotesService = new NotesService()
 
-  ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => notesService.getNotes(...args))
-  ipcMain.handle('readNote', (_, ...args: Parameters<ReadNote>) => notesService.readNote(...args))
-  ipcMain.handle('writeNote', (_, ...args: Parameters<WriteNote>) =>
+  ipcMain.handle(NotesRoutes.GET_NOTES, (_, ...args: Parameters<GetNotes>) =>
+    notesService.getNotes(...args)
+  )
+  ipcMain.handle(NotesRoutes.READ_NOTE, (_, ...args: Parameters<ReadNote>) =>
+    notesService.readNote(...args)
+  )
+  ipcMain.handle(NotesRoutes.WRITE_NOTE, (_, ...args: Parameters<WriteNote>) =>
     notesService.writeNote(...args)
   )
-  ipcMain.handle('createNote', (_, ...args: Parameters<CreateNote>) =>
+  ipcMain.handle(NotesRoutes.CREATE_NOTE, (_, ...args: Parameters<CreateNote>) =>
     notesService.createNote(...args)
   )
-  ipcMain.handle('deleteNote', (_, ...args: Parameters<DeleteNote>) =>
+  ipcMain.handle(NotesRoutes.DELETE_NOTE, (_, ...args: Parameters<DeleteNote>) =>
     notesService.deleteNote(...args)
+  )
+}
+
+enum ToDosRoutes {
+  GET_TODOS_WORKSPACES = 'getToDosWorkspaces'
+}
+
+const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
+  const todosService: IToDosService = new ToDosService()
+
+  ipcMain.handle(ToDosRoutes.GET_TODOS_WORKSPACES, (_, ...args: Parameters<GetToDosWorkspaces>) =>
+    todosService.getToDosWorkspaces(...args)
   )
 }
