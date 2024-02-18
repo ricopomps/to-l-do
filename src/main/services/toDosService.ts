@@ -1,6 +1,6 @@
 import { toDoWorkspaceConfigFileName, toDoWorkspaceConfigFolderName } from '@shared/constants'
-import { ToDoWorkspace } from '@shared/models/todo'
-import { CreateToDosWorkspaces, GetToDosWorkspaces } from '@shared/types'
+import { ToDo, ToDoWorkspace } from '@shared/models/todo'
+import { CreateToDo, CreateToDosWorkspaces, GetToDosWorkspaces } from '@shared/types'
 import { ensureDir } from 'fs-extra'
 import mongoose from 'mongoose'
 import FileService, { IFileService } from './fileService'
@@ -11,6 +11,8 @@ export interface IToDosService {
   getToDosWorkspaces: GetToDosWorkspaces
 
   createWorkspace: CreateToDosWorkspaces
+
+  createToDo: CreateToDo
 }
 
 export default class ToDosService implements IToDosService {
@@ -20,10 +22,18 @@ export default class ToDosService implements IToDosService {
     this.fileService = new FileService()
   }
 
-  async getWorkspaceConfigFilePath(workspaceId: ToDoWorkspace['_id']) {
+  async getWorkspaceFolder(workspaceId: ToDoWorkspace['_id']) {
     const toDoDir = await this.fileService.getToDosDir()
 
-    const workspaceConfigFilePath = `${toDoDir}/${workspaceId}/${toDoWorkspaceConfigFolderName}`
+    const workspaceConfigFilePath = `${toDoDir}/${workspaceId}`
+
+    return workspaceConfigFilePath
+  }
+
+  async getWorkspaceConfigFilePath(workspaceId: ToDoWorkspace['_id']) {
+    const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
+
+    const workspaceConfigFilePath = `${workspaceFolder}/${toDoWorkspaceConfigFolderName}`
 
     await ensureDir(workspaceConfigFilePath)
 
@@ -57,7 +67,8 @@ export default class ToDosService implements IToDosService {
     const newWorkspace: ToDoWorkspace = {
       _id: new mongoose.Types.ObjectId().toString(),
       lastEditTime: new Date().getTime(),
-      title
+      title,
+      createdAtTime: new Date().getTime()
     }
 
     const workspaceConfigFilePath = await this.getWorkspaceConfigFilePath(newWorkspace._id)
@@ -69,5 +80,29 @@ export default class ToDosService implements IToDosService {
     )
 
     return newWorkspace
+  }
+
+  createNewToDo(title: ToDo['title']) {
+    const newToDo: ToDo = {
+      _id: new mongoose.Types.ObjectId().toString(),
+      title,
+      lastEditTime: Date.now(),
+      createdAtTime: Date.now(),
+      children: [],
+      colapsed: false,
+      completed: false
+    }
+
+    return newToDo
+  }
+
+  async createToDo(workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) {
+    const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
+
+    const newToDo = this.createNewToDo(toDoTitle)
+
+    await this.fileService.writeFile(workspaceFolder, newToDo._id, JSON.stringify(newToDo))
+
+    return newToDo
   }
 }

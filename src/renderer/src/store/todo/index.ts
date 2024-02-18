@@ -1,4 +1,4 @@
-import { createToDosWorkspaces, getToDosWorkspaces } from '@renderer/api/toDosApi'
+import { createToDo, createToDosWorkspaces, getToDosWorkspaces } from '@renderer/api/toDosApi'
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
@@ -41,19 +41,22 @@ export const createToDoWorkspace = atom(null, async (get, set, title: ToDoWorksp
   set(toDosWorkspacesAtom, [newToDosWorkspace, ...toDosWorkspaces])
 })
 
-export const createEmptyToDoAtom = atom(null, async (get, set, toDoTitle: ToDo['title']) => {
-  const toDos = get(toDosAtom)
+export const createEmptyToDoAtom = atom(
+  null,
+  async (get, set, workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) => {
+    const toDos = get(toDosAtom)
 
-  if (!toDos) return
+    if (!toDos) return
 
-  const title = toDoTitle
+    const title = toDoTitle
 
-  if (!title) return
+    if (!title) return
 
-  const newToDo = createNewToDo(title)
+    const newToDo = await createToDo(workspaceId, toDoTitle)
 
-  set(toDosAtom, [newToDo, ...toDos])
-})
+    set(toDosAtom, [newToDo, ...toDos])
+  }
+)
 
 const selectedToDoAtomAsync = atom(async (get) => {
   const toDos = get(toDosAtom)
@@ -71,7 +74,8 @@ const selectedToDoAtomAsync = atom(async (get) => {
 const emptyToDo: ToDo = {
   _id: '',
   title: '',
-  lastEditTime: Date.now()
+  lastEditTime: Date.now(),
+  createdAtTime: Date.now()
 }
 
 export const selectedToDoAtom = unwrap(selectedToDoAtomAsync, (prev) => prev ?? emptyToDo)

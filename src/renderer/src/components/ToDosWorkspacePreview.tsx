@@ -8,6 +8,7 @@ export type ToDosWorkspacePreviewProps = ToDoWorkspace & {
 } & ComponentProps<'div'>
 
 export default function ToDosWorkspacePreview({
+  _id,
   title,
   lastEditTime,
   isActive = false,
@@ -32,7 +33,7 @@ export default function ToDosWorkspacePreview({
       </span>
       <div className="flex items-center justify-between">
         <span className="inline-block w-full mb-2 text-xs font-light text-left">{date}</span>
-        <NewToDoButton />
+        <NewToDoButton workspaceId={_id} />
       </div>
     </div>
   )

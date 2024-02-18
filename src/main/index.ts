@@ -1,6 +1,7 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import {
   CreateNote,
+  CreateToDo,
   CreateToDosWorkspaces,
   DeleteNote,
   GetNotes,
@@ -122,7 +123,8 @@ const notesRoutesConfig = (ipcMain: Electron.IpcMain) => {
 
 enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
-  CREATE_TODOS_WORKSPACE = 'createToDosWorkspace'
+  CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
+  CREATE_TODO = 'createToDo'
 }
 
 const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
@@ -135,5 +137,9 @@ const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
   ipcMain.handle(
     ToDosRoutes.CREATE_TODOS_WORKSPACE,
     (_, ...args: Parameters<CreateToDosWorkspaces>) => todosService.createWorkspace(...args)
+  )
+
+  ipcMain.handle(ToDosRoutes.CREATE_TODO, (_, ...args: Parameters<CreateToDo>) =>
+    todosService.createToDo(...args)
   )
 }

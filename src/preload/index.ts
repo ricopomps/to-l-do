@@ -23,7 +23,8 @@ enum NotesRoutes {
 
 enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
-  CREATE_TODOS_WORKSPACE = 'createToDosWorkspace'
+  CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
+  CREATE_TODO = 'createToDo'
 }
 
 try {
@@ -45,7 +46,9 @@ try {
       getToDosWorkspaces: (...args: Parameters<GetToDosWorkspaces>) =>
         ipcRenderer.invoke(ToDosRoutes.GET_TODOS_WORKSPACES, ...args),
       createWorkspace: (...args: Parameters<CreateToDosWorkspaces>) =>
-        ipcRenderer.invoke(ToDosRoutes.CREATE_TODOS_WORKSPACE, ...args)
+        ipcRenderer.invoke(ToDosRoutes.CREATE_TODOS_WORKSPACE, ...args),
+      createToDo: (...args: Parameters<CreateToDosWorkspaces>) =>
+        ipcRenderer.invoke(ToDosRoutes.CREATE_TODO, ...args)
     }
   })
 } catch (error) {

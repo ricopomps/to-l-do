@@ -1,4 +1,4 @@
-import { ToDoWorkspace } from '@shared/models/todo'
+import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { NoteContent, NoteInfo } from '../models/note'
 
 //NOTES TYPES
@@ -11,3 +11,7 @@ export type DeleteNote = (title: NoteInfo['title']) => Promise<boolean>
 //TODOS TYPES
 export type GetToDosWorkspaces = () => Promise<ToDoWorkspace[]>
 export type CreateToDosWorkspaces = (title: ToDoWorkspace['title']) => Promise<ToDoWorkspace>
+export type CreateToDo = (
+  workspaceId: ToDoWorkspace['_id'],
+  toDoTitle: ToDo['title']
+) => Promise<ToDo>

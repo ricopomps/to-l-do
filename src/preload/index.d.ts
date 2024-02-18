@@ -1,6 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 import {
   CreateNote,
+  CreateToDo,
   CreateToDosWorkspaces,
   DeleteNote,
   GetNotes,
@@ -24,6 +25,7 @@ declare global {
       toDosApi: {
         getToDosWorkspaces: GetToDosWorkspaces
         createWorkspace: CreateToDosWorkspaces
+        createToDo: CreateToDo
       }
     }
   }

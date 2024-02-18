@@ -1,18 +1,22 @@
 import { createEmptyToDoAtom } from '@renderer/store/todo'
-import { ToDo } from '@shared/models/todo'
+import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import InputModal from '../Modal/InputModal'
 import ActionButton, { ActionButtonProps } from './ActionButton'
 
-export default function NewToDoButton({ ...props }: ActionButtonProps) {
+type NewToDoButtonProps = ActionButtonProps & {
+  workspaceId: ToDoWorkspace['_id']
+}
+
+export default function NewToDoButton({ workspaceId, ...props }: NewToDoButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   const createEmptyToDo = useSetAtom(createEmptyToDoAtom)
 
   const handleCreate = async (input: ToDo['title']) => {
-    await createEmptyToDo(input)
+    await createEmptyToDo(workspaceId, input)
   }
 
   return (
