@@ -60,6 +60,8 @@ export const createEmptyToDoAtom = atom(
     const newToDo = await createToDo(workspaceId, toDoTitle)
 
     set(toDosAtom, [newToDo, ...toDos])
+    const counter = get(refreshCounter)
+    set(refreshCounter, counter + 1)
   }
 )
 
@@ -134,27 +136,32 @@ export const createChildrenToDoAtom = atom(
   }
 )
 
-const selectedToDoWorkspaceAtomAsync = atom(async (get) => {
-  const toDosWorkspaces = get(toDosWorkspacesAtom)
-  const selectedToDosWorkspaceId = get(selectedToDosWorkspaceIdAtom)
+const selectedToDoWorkspaceAtomAsync = atom(
+  async (get) => {
+    get(refreshCounter)
+    const toDosWorkspaces = get(toDosWorkspacesAtom)
+    const selectedToDosWorkspaceId = get(selectedToDosWorkspaceIdAtom)
 
-  if (selectedToDosWorkspaceId === null || !toDosWorkspaces) return null
+    if (selectedToDosWorkspaceId === null || !toDosWorkspaces) return null
 
-  const selectedToDoWorkspace = toDosWorkspaces.find(
-    (toDoWorkspace) => toDoWorkspace._id === selectedToDosWorkspaceId
-  )
+    const selectedToDoWorkspace = toDosWorkspaces.find(
+      (toDoWorkspace) => toDoWorkspace._id === selectedToDosWorkspaceId
+    )
 
-  if (!selectedToDoWorkspace) return null
+    if (!selectedToDoWorkspace) return null
 
-  const toDos = await getToDos(selectedToDoWorkspace._id)
+    const toDos = await getToDos(selectedToDoWorkspace._id)
 
-  return {
-    ...selectedToDoWorkspace,
-    toDos
-  }
-})
+    return {
+      ...selectedToDoWorkspace,
+      toDos
+    }
+  },
+  (_, set) => set(refreshCounter, (i) => i + 1)
+)
 
 export const selectedToDoWorkspaceAtom = unwrap(
   selectedToDoWorkspaceAtomAsync,
   (prev) => prev ?? null
 )
+const refreshCounter = atom(0)
