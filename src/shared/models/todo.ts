@@ -7,6 +7,7 @@ export type ToDoWorkspace = {
 
 export type ToDo = {
   _id: string
+  workspaceId: string
   title: string
   lastEditTime: number
   createdAtTime: number

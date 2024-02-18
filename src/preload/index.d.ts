@@ -8,6 +8,7 @@ import {
   GetToDos,
   GetToDosWorkspaces,
   ReadNote,
+  UpdateToDo,
   WriteNote
 } from 'src/shared/types'
 
@@ -28,6 +29,7 @@ declare global {
         createWorkspace: CreateToDosWorkspaces
         createToDo: CreateToDo
         getToDos: GetToDos
+        updateToDo: UpdateToDo
       }
     }
   }

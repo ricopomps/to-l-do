@@ -1,8 +1,7 @@
-import { selectedToDoIndexAtom, toDosAtom } from '@renderer/store/todo'
-import { useAtom, useAtomValue } from 'jotai'
+import { selectedToDoIndexAtom } from '@renderer/store/todo'
+import { useAtom } from 'jotai'
 
 export default function useToDosList({ onSelect }: { onSelect?: () => void }) {
-  const toDos = useAtomValue(toDosAtom)
   const [selectedToDoIndex, setSelectedToDoIndex] = useAtom(selectedToDoIndexAtom)
 
   const handleToDoselect = (index: string) => async () => {
@@ -14,7 +13,6 @@ export default function useToDosList({ onSelect }: { onSelect?: () => void }) {
   }
 
   return {
-    toDos,
     selectedToDoIndex,
     handleToDoselect
   }

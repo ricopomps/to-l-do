@@ -1,6 +1,12 @@
 import { toDoWorkspaceConfigFileName, toDoWorkspaceConfigFolderName } from '@shared/constants'
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
-import { CreateToDo, CreateToDosWorkspaces, GetToDos, GetToDosWorkspaces } from '@shared/types'
+import {
+  CreateToDo,
+  CreateToDosWorkspaces,
+  GetToDos,
+  GetToDosWorkspaces,
+  UpdateToDo
+} from '@shared/types'
 import { ensureDir } from 'fs-extra'
 import mongoose from 'mongoose'
 import FileService, { IFileService } from './fileService'
@@ -15,6 +21,8 @@ export interface IToDosService {
   createToDo: CreateToDo
 
   getToDos: GetToDos
+
+  updateToDo: UpdateToDo
 }
 
 export default class ToDosService implements IToDosService {
@@ -84,9 +92,10 @@ export default class ToDosService implements IToDosService {
     return newWorkspace
   }
 
-  createNewToDo(title: ToDo['title']) {
+  createNewToDo(title: ToDo['title'], workspaceId: ToDoWorkspace['_id']) {
     const newToDo: ToDo = {
       _id: new mongoose.Types.ObjectId().toString(),
+      workspaceId,
       title,
       lastEditTime: Date.now(),
       createdAtTime: Date.now(),
@@ -101,8 +110,7 @@ export default class ToDosService implements IToDosService {
   async createToDo(workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) {
     const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
 
-    const newToDo = this.createNewToDo(toDoTitle)
-
+    const newToDo = this.createNewToDo(toDoTitle, workspaceId)
     await this.fileService.writeFile(
       workspaceFolder,
       `${newToDo._id}.json`,
@@ -122,5 +130,19 @@ export default class ToDosService implements IToDosService {
     return await Promise.all(
       toDos.map((toDo) => this.fileService.readJsonFile<ToDo>(workspaceFolder, toDo))
     )
+  }
+
+  async updateToDo(workspaceId: ToDoWorkspace['_id'], toDo: ToDo) {
+    const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
+
+    const updatedToDo: ToDo = { ...toDo, lastEditTime: Date.now() }
+
+    await this.fileService.writeFile(
+      workspaceFolder,
+      `${updatedToDo._id}.json`,
+      JSON.stringify(updatedToDo)
+    )
+
+    return updatedToDo
   }
 }

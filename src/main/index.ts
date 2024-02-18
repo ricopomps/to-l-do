@@ -8,6 +8,7 @@ import {
   GetToDos,
   GetToDosWorkspaces,
   ReadNote,
+  UpdateToDo,
   WriteNote
 } from '@shared/types'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
@@ -126,7 +127,8 @@ enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
   CREATE_TODO = 'createToDo',
-  GET_TODOS = 'getToDos'
+  GET_TODOS = 'getToDos',
+  UPDATE_TODO = 'updateToDo'
 }
 
 const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
@@ -147,5 +149,9 @@ const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
 
   ipcMain.handle(ToDosRoutes.GET_TODOS, (_, ...args: Parameters<GetToDos>) =>
     todosService.getToDos(...args)
+  )
+
+  ipcMain.handle(ToDosRoutes.UPDATE_TODO, (_, ...args: Parameters<UpdateToDo>) =>
+    todosService.updateToDo(...args)
   )
 }

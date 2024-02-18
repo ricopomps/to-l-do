@@ -2,23 +2,13 @@ import {
   createToDo,
   createToDosWorkspaces,
   getToDos,
-  getToDosWorkspaces
+  getToDosWorkspaces,
+  updateToDo
 } from '@renderer/api/toDosApi'
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
-import { toDoMock } from '../mocks'
-import { completeAll, createNewToDo, mapToDoList } from './utils'
-
-const loadToDos = async () => {
-  const toDos = toDoMock
-
-  return toDos.sort((a, b) => b.lastEditTime - a.lastEditTime)
-}
-
-const toDosAtomAsync = atom<ToDo[] | Promise<ToDo[]>>(loadToDos())
-
-export const toDosAtom = unwrap(toDosAtomAsync, (prev) => prev)
+import { completeAll, mapToDoList } from './utils'
 
 const loadToDosWorkspaces = async () => {
   const workspaces = await getToDosWorkspaces()
@@ -49,37 +39,27 @@ export const createToDoWorkspace = atom(null, async (get, set, title: ToDoWorksp
 export const createEmptyToDoAtom = atom(
   null,
   async (get, set, workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) => {
-    const toDos = get(toDosAtom)
-
-    if (!toDos) return
-
     const title = toDoTitle
 
     if (!title) return
 
-    const newToDo = await createToDo(workspaceId, toDoTitle)
+    await createToDo(workspaceId, toDoTitle)
 
-    set(toDosAtom, [newToDo, ...toDos])
-    const counter = get(refreshCounter)
-    set(refreshCounter, counter + 1)
+    set(refreshCounter, (i) => i + 1)
   }
 )
 
 const selectedToDoAtomAsync = atom(async (get) => {
-  const toDos = get(toDosAtom)
   const selectedToDoIndex = get(selectedToDoIndexAtom)
 
-  if (selectedToDoIndex === null || !toDos) return null
+  if (selectedToDoIndex === null) return null
 
-  const selectedToDo = toDos.find((toDo) => toDo._id === selectedToDoIndex)
-
-  if (!selectedToDo) return null
-
-  return selectedToDo
+  return emptyToDo //TODO: REMOVE
 })
 
 const emptyToDo: ToDo = {
   _id: '',
+  workspaceId: '',
   title: '',
   lastEditTime: Date.now(),
   createdAtTime: Date.now()
@@ -87,24 +67,27 @@ const emptyToDo: ToDo = {
 
 export const selectedToDoAtom = unwrap(selectedToDoAtomAsync, (prev) => prev ?? emptyToDo)
 
-export const toggleCollapseToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
-  const toDos = get(toDosAtom)
+export const toggleCollapseToDoAtom = atom(null, async (get, set, selectedToDoIndex: string) => {
+  const workspace = get(selectedToDoWorkspaceAtom)
 
-  if (!toDos) return
-
-  const updateToDo = (toDo: ToDo) => {
+  if (!workspace) return
+  const updateToDoFunction = (toDo: ToDo) => {
     return { ...toDo, colapsed: !toDo.colapsed }
   }
 
-  set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+  const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+
+  await updateToDo(parentToDo.workspaceId, parentToDo)
+
+  set(refreshCounter, (i) => i + 1)
 })
 
-export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: string) => {
-  const toDos = get(toDosAtom)
+export const toggleCompletedToDoAtom = atom(null, async (get, set, selectedToDoIndex: string) => {
+  const workspace = get(selectedToDoWorkspaceAtom)
 
-  if (!toDos) return
+  if (!workspace) return
 
-  const updateToDo = (toDo: ToDo) => {
+  const updateToDoFunction = (toDo: ToDo) => {
     return {
       ...toDo,
       completed: !toDo.completed,
@@ -112,19 +95,23 @@ export const toggleCompletedToDoAtom = atom(null, (get, set, selectedToDoIndex: 
     }
   }
 
-  set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+  const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+
+  await updateToDo(parentToDo.workspaceId, parentToDo)
+
+  set(refreshCounter, (i) => i + 1)
 })
 
 export const createChildrenToDoAtom = atom(
   null,
-  (get, set, selectedToDoIndex: string, title: ToDo['title']) => {
-    const toDos = get(toDosAtom)
+  async (get, set, selectedToDoIndex: string, title: ToDo['title']) => {
+    const workspace = get(selectedToDoWorkspaceAtom)
 
-    if (!toDos || !title) return
+    if (!workspace || !title) return
 
-    const newToDo = createNewToDo(title)
+    const newToDo = await createToDo(workspace._id, title)
 
-    const updateToDo = (toDo: ToDo) => {
+    const updateToDoFunction = (toDo: ToDo) => {
       return {
         ...toDo,
         children: [newToDo, ...(toDo.children ?? [])],
@@ -132,7 +119,11 @@ export const createChildrenToDoAtom = atom(
       }
     }
 
-    set(toDosAtom, mapToDoList(toDos, selectedToDoIndex, updateToDo))
+    const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+
+    await updateToDo(parentToDo.workspaceId, parentToDo)
+
+    set(refreshCounter, (i) => i + 1)
   }
 )
 

@@ -6,6 +6,7 @@ import {
   GetToDos,
   GetToDosWorkspaces,
   ReadNote,
+  UpdateToDo,
   WriteNote
 } from '@shared/types'
 import { contextBridge, ipcRenderer } from 'electron'
@@ -26,7 +27,8 @@ enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
   CREATE_TODO = 'createToDo',
-  GET_TODOS = 'getToDos'
+  GET_TODOS = 'getToDos',
+  UPDATE_TODO = 'updateToDo'
 }
 
 try {
@@ -52,7 +54,9 @@ try {
       createToDo: (...args: Parameters<CreateToDosWorkspaces>) =>
         ipcRenderer.invoke(ToDosRoutes.CREATE_TODO, ...args),
       getToDos: (...args: Parameters<GetToDos>) =>
-        ipcRenderer.invoke(ToDosRoutes.GET_TODOS, ...args)
+        ipcRenderer.invoke(ToDosRoutes.GET_TODOS, ...args),
+      updateToDo: (...args: Parameters<UpdateToDo>) =>
+        ipcRenderer.invoke(ToDosRoutes.UPDATE_TODO, ...args)
     } // TODO: make generic assing function, passing the channel and the generic type
   })
 } catch (error) {

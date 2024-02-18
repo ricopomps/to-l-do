@@ -1,5 +1,11 @@
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
-import { CreateToDo, CreateToDosWorkspaces, GetToDos, GetToDosWorkspaces } from '@shared/types'
+import {
+  CreateToDo,
+  CreateToDosWorkspaces,
+  GetToDos,
+  GetToDosWorkspaces,
+  UpdateToDo
+} from '@shared/types'
 
 export const getToDosWorkspaces: GetToDosWorkspaces = async () => {
   return await window.context.toDosApi.getToDosWorkspaces()
@@ -20,4 +26,8 @@ export const createToDo: CreateToDo = async (
 
 export const getToDos: GetToDos = async (workspaceId: ToDoWorkspace['_id']) => {
   return await window.context.toDosApi.getToDos(workspaceId)
+}
+
+export const updateToDo: UpdateToDo = async (workspaceId: ToDoWorkspace['_id'], toDo: ToDo) => {
+  return await window.context.toDosApi.updateToDo(workspaceId, toDo)
 }
