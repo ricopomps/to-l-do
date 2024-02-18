@@ -1,15 +1,17 @@
 import useToDosList from '@renderer/hooks/useToDosList'
+import { selectedToDoWorkspaceAtom } from '@renderer/store/todo'
 import { ToDo } from '@shared/models/todo'
+import { useAtomValue } from 'jotai'
 import ToDoPreview from './ToDoPreview'
 
 export default function ToDoList() {
-  const { toDos } = useToDosList({})
+  const selectedToDoWorkspace = useAtomValue(selectedToDoWorkspaceAtom)
 
-  if (!toDos) return null
+  if (!selectedToDoWorkspace) return null
 
   return (
     <div className="space-y-1 p-2">
-      {toDos.map((toDo) => (
+      {selectedToDoWorkspace.toDos.map((toDo) => (
         <div key={toDo._id}>
           <ToDoWithChild toDo={toDo} />
         </div>

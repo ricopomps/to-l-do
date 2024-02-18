@@ -3,6 +3,7 @@ import {
   CreateToDosWorkspaces,
   DeleteNote,
   GetNotes,
+  GetToDos,
   GetToDosWorkspaces,
   ReadNote,
   WriteNote
@@ -24,7 +25,8 @@ enum NotesRoutes {
 enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
-  CREATE_TODO = 'createToDo'
+  CREATE_TODO = 'createToDo',
+  GET_TODOS = 'getToDos'
 }
 
 try {
@@ -48,8 +50,10 @@ try {
       createWorkspace: (...args: Parameters<CreateToDosWorkspaces>) =>
         ipcRenderer.invoke(ToDosRoutes.CREATE_TODOS_WORKSPACE, ...args),
       createToDo: (...args: Parameters<CreateToDosWorkspaces>) =>
-        ipcRenderer.invoke(ToDosRoutes.CREATE_TODO, ...args)
-    }
+        ipcRenderer.invoke(ToDosRoutes.CREATE_TODO, ...args),
+      getToDos: (...args: Parameters<GetToDos>) =>
+        ipcRenderer.invoke(ToDosRoutes.GET_TODOS, ...args)
+    } // TODO: make generic assing function, passing the channel and the generic type
   })
 } catch (error) {
   console.error(error)

@@ -1,6 +1,6 @@
 import { toDoWorkspaceConfigFileName, toDoWorkspaceConfigFolderName } from '@shared/constants'
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
-import { CreateToDo, CreateToDosWorkspaces, GetToDosWorkspaces } from '@shared/types'
+import { CreateToDo, CreateToDosWorkspaces, GetToDos, GetToDosWorkspaces } from '@shared/types'
 import { ensureDir } from 'fs-extra'
 import mongoose from 'mongoose'
 import FileService, { IFileService } from './fileService'
@@ -13,6 +13,8 @@ export interface IToDosService {
   createWorkspace: CreateToDosWorkspaces
 
   createToDo: CreateToDo
+
+  getToDos: GetToDos
 }
 
 export default class ToDosService implements IToDosService {
@@ -101,8 +103,24 @@ export default class ToDosService implements IToDosService {
 
     const newToDo = this.createNewToDo(toDoTitle)
 
-    await this.fileService.writeFile(workspaceFolder, newToDo._id, JSON.stringify(newToDo))
+    await this.fileService.writeFile(
+      workspaceFolder,
+      `${newToDo._id}.json`,
+      JSON.stringify(newToDo)
+    )
 
     return newToDo
+  }
+
+  async getToDos(workspaceId: ToDoWorkspace['_id']) {
+    const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
+
+    const toDosFilesNames = await this.fileService.getFilesNames(workspaceFolder)
+
+    const toDos = toDosFilesNames.filter((fileName) => fileName.endsWith('.json'))
+
+    return await Promise.all(
+      toDos.map((toDo) => this.fileService.readJsonFile<ToDo>(workspaceFolder, toDo))
+    )
   }
 }

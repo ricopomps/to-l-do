@@ -6,6 +6,7 @@ export const createNewToDo = (title: string) => {
     _id: new mongoose.Types.ObjectId().toString(),
     title,
     lastEditTime: Date.now(),
+    createdAtTime: Date.now(),
     children: [],
     colapsed: false,
     completed: false

@@ -5,6 +5,7 @@ import {
   CreateToDosWorkspaces,
   DeleteNote,
   GetNotes,
+  GetToDos,
   GetToDosWorkspaces,
   ReadNote,
   WriteNote
@@ -124,7 +125,8 @@ const notesRoutesConfig = (ipcMain: Electron.IpcMain) => {
 enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
-  CREATE_TODO = 'createToDo'
+  CREATE_TODO = 'createToDo',
+  GET_TODOS = 'getToDos'
 }
 
 const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
@@ -141,5 +143,9 @@ const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
 
   ipcMain.handle(ToDosRoutes.CREATE_TODO, (_, ...args: Parameters<CreateToDo>) =>
     todosService.createToDo(...args)
+  )
+
+  ipcMain.handle(ToDosRoutes.GET_TODOS, (_, ...args: Parameters<GetToDos>) =>
+    todosService.getToDos(...args)
   )
 }
