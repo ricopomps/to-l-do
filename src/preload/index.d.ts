@@ -1,5 +1,13 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from 'src/shared/types'
+import {
+  CreateNote,
+  CreateToDosWorkspaces,
+  DeleteNote,
+  GetNotes,
+  GetToDosWorkspaces,
+  ReadNote,
+  WriteNote
+} from 'src/shared/types'
 
 declare global {
   interface Window {
@@ -12,6 +20,10 @@ declare global {
         writeNote: WriteNote
         createNote: CreateNote
         deleteNote: DeleteNote
+      }
+      toDosApi: {
+        getToDosWorkspaces: GetToDosWorkspaces
+        createWorkspace: CreateToDosWorkspaces
       }
     }
   }

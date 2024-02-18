@@ -10,3 +10,4 @@ export type DeleteNote = (title: NoteInfo['title']) => Promise<boolean>
 
 //TODOS TYPES
 export type GetToDosWorkspaces = () => Promise<ToDoWorkspace[]>
+export type CreateToDosWorkspaces = (title: ToDoWorkspace['title']) => Promise<ToDoWorkspace>

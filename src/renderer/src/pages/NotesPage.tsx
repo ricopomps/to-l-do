@@ -17,7 +17,7 @@ export default function NotesPage() {
     <RootLayout>
       <Sidebar className="bg-zinc-400">
         <NotesActionButtonsRow className="flex justify-between mt-1" />
-        <NotePreviewList className="mt-3 space-y-1" onSelect={resetScroll} />
+        <NotePreviewList className="mt-3 p-1 space-y-1" onSelect={resetScroll} />
       </Sidebar>
       <Content ref={contentConainerRef} className="border-l bg-zinc-900/50 border-l-white/20">
         <FloatingNoteTitle className="pt-2" />

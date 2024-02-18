@@ -1,4 +1,12 @@
-import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/types'
+import {
+  CreateNote,
+  CreateToDosWorkspaces,
+  DeleteNote,
+  GetNotes,
+  GetToDosWorkspaces,
+  ReadNote,
+  WriteNote
+} from '@shared/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 if (!process.contextIsolated) {
@@ -11,6 +19,11 @@ enum NotesRoutes {
   WRITE_NOTE = 'writeNote',
   CREATE_NOTE = 'createNote',
   DELETE_NOTE = 'deleteNote'
+}
+
+enum ToDosRoutes {
+  GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
+  CREATE_TODOS_WORKSPACE = 'createToDosWorkspace'
 }
 
 try {
@@ -27,6 +40,12 @@ try {
         ipcRenderer.invoke(NotesRoutes.CREATE_NOTE, ...args),
       deleteNote: (...args: Parameters<DeleteNote>) =>
         ipcRenderer.invoke(NotesRoutes.DELETE_NOTE, ...args)
+    },
+    toDosApi: {
+      getToDosWorkspaces: (...args: Parameters<GetToDosWorkspaces>) =>
+        ipcRenderer.invoke(ToDosRoutes.GET_TODOS_WORKSPACES, ...args),
+      createWorkspace: (...args: Parameters<CreateToDosWorkspaces>) =>
+        ipcRenderer.invoke(ToDosRoutes.CREATE_TODOS_WORKSPACE, ...args)
     }
   })
 } catch (error) {

@@ -1,11 +1,11 @@
 import { ComponentProps } from 'react'
 import DeleteToDoButton from './Button/DeleteNoteButton'
-import NewToDoButton from './Button/NewToDoButton'
+import NewToDoWorkspaceButton from './Button/NewToDosWorkspaceButton'
 
 export default function ToDosActionButtonsRow({ ...props }: ComponentProps<'div'>) {
   return (
     <div {...props}>
-      <NewToDoButton></NewToDoButton>
+      <NewToDoWorkspaceButton></NewToDoWorkspaceButton>
       <DeleteToDoButton></DeleteToDoButton>
     </div>
   )
