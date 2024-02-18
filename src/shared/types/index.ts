@@ -15,5 +15,6 @@ export type CreateToDo = (
   workspaceId: ToDoWorkspace['_id'],
   toDoTitle: ToDo['title']
 ) => Promise<ToDo>
+export type CreateNewToDo = (title: ToDo['title'], workspaceId: ToDoWorkspace['_id']) => ToDo
 export type GetToDos = (workspaceId: ToDoWorkspace['_id']) => Promise<ToDo[]>
 export type UpdateToDo = (workspaceId: ToDoWorkspace['_id'], toDo: ToDo) => Promise<ToDo>

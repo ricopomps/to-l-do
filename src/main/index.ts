@@ -1,5 +1,6 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import {
+  CreateNewToDo,
   CreateNote,
   CreateToDo,
   CreateToDosWorkspaces,
@@ -127,6 +128,7 @@ enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
   CREATE_TODO = 'createToDo',
+  CREATE_NEW_TODO = 'createNewToDo',
   GET_TODOS = 'getToDos',
   UPDATE_TODO = 'updateToDo'
 }
@@ -145,6 +147,10 @@ const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
 
   ipcMain.handle(ToDosRoutes.CREATE_TODO, (_, ...args: Parameters<CreateToDo>) =>
     todosService.createToDo(...args)
+  )
+
+  ipcMain.handle(ToDosRoutes.CREATE_NEW_TODO, (_, ...args: Parameters<CreateNewToDo>) =>
+    todosService.createNewToDo(...args)
   )
 
   ipcMain.handle(ToDosRoutes.GET_TODOS, (_, ...args: Parameters<GetToDos>) =>

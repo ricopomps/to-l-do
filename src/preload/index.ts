@@ -1,5 +1,7 @@
 import {
+  CreateNewToDo,
   CreateNote,
+  CreateToDo,
   CreateToDosWorkspaces,
   DeleteNote,
   GetNotes,
@@ -27,6 +29,7 @@ enum ToDosRoutes {
   GET_TODOS_WORKSPACES = 'getToDosWorkspaces',
   CREATE_TODOS_WORKSPACE = 'createToDosWorkspace',
   CREATE_TODO = 'createToDo',
+  CREATE_NEW_TODO = 'createNewToDo',
   GET_TODOS = 'getToDos',
   UPDATE_TODO = 'updateToDo'
 }
@@ -51,8 +54,10 @@ try {
         ipcRenderer.invoke(ToDosRoutes.GET_TODOS_WORKSPACES, ...args),
       createWorkspace: (...args: Parameters<CreateToDosWorkspaces>) =>
         ipcRenderer.invoke(ToDosRoutes.CREATE_TODOS_WORKSPACE, ...args),
-      createToDo: (...args: Parameters<CreateToDosWorkspaces>) =>
+      createToDo: (...args: Parameters<CreateToDo>) =>
         ipcRenderer.invoke(ToDosRoutes.CREATE_TODO, ...args),
+      createNewToDo: (...args: Parameters<CreateNewToDo>) =>
+        ipcRenderer.invoke(ToDosRoutes.CREATE_NEW_TODO, ...args),
       getToDos: (...args: Parameters<GetToDos>) =>
         ipcRenderer.invoke(ToDosRoutes.GET_TODOS, ...args),
       updateToDo: (...args: Parameters<UpdateToDo>) =>

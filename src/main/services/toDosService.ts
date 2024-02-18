@@ -1,6 +1,7 @@
 import { toDoWorkspaceConfigFileName, toDoWorkspaceConfigFolderName } from '@shared/constants'
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import {
+  CreateNewToDo,
   CreateToDo,
   CreateToDosWorkspaces,
   GetToDos,
@@ -19,6 +20,8 @@ export interface IToDosService {
   createWorkspace: CreateToDosWorkspaces
 
   createToDo: CreateToDo
+
+  createNewToDo: CreateNewToDo
 
   getToDos: GetToDos
 

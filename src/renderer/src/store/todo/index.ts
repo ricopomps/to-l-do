@@ -1,4 +1,5 @@
 import {
+  createNewToDo,
   createToDo,
   createToDosWorkspaces,
   getToDos,
@@ -38,7 +39,7 @@ export const createToDoWorkspace = atom(null, async (get, set, title: ToDoWorksp
 
 export const createEmptyToDoAtom = atom(
   null,
-  async (get, set, workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) => {
+  async (_, set, workspaceId: ToDoWorkspace['_id'], toDoTitle: ToDo['title']) => {
     const title = toDoTitle
 
     if (!title) return
@@ -109,7 +110,7 @@ export const createChildrenToDoAtom = atom(
 
     if (!workspace || !title) return
 
-    const newToDo = await createToDo(workspace._id, title)
+    const newToDo = await createNewToDo(title, workspace._id) // TODO: All ipc conecctions are async, fix this
 
     const updateToDoFunction = (toDo: ToDo) => {
       return {
