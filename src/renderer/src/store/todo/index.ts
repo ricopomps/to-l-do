@@ -9,7 +9,7 @@ import {
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
-import { completeAll, mapToDoList } from './utils'
+import { completeAll, mapToDo } from './utils'
 
 const loadToDosWorkspaces = async () => {
   const workspaces = await getToDosWorkspaces()
@@ -76,7 +76,7 @@ export const toggleCollapseToDoAtom = atom(null, async (get, set, selectedToDoIn
     return { ...toDo, colapsed: !toDo.colapsed }
   }
 
-  const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+  const { parentToDo } = mapToDo(workspace.toDos, selectedToDoIndex, updateToDoFunction)
 
   await updateToDo(parentToDo.workspaceId, parentToDo)
 
@@ -96,7 +96,7 @@ export const toggleCompletedToDoAtom = atom(null, async (get, set, selectedToDoI
     }
   }
 
-  const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+  const { parentToDo } = mapToDo(workspace.toDos, selectedToDoIndex, updateToDoFunction)
 
   await updateToDo(parentToDo.workspaceId, parentToDo)
 
@@ -120,7 +120,7 @@ export const createChildrenToDoAtom = atom(
       }
     }
 
-    const { parentToDo } = mapToDoList(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+    const { parentToDo } = mapToDo(workspace.toDos, selectedToDoIndex, updateToDoFunction)
 
     await updateToDo(parentToDo.workspaceId, parentToDo)
 
