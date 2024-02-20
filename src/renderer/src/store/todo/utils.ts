@@ -13,7 +13,7 @@ export const mapToDo = (
   selectedToDoIndex: string,
   updateToDo: (toDo: ToDo) => ToDo
 ): { parentToDo: ToDo; mappedToDos: ToDo[] } => {
-  const mappedToDos = mapToDoList(toDos, selectedToDoIndex, updateToDo).mappedToDos
+  const mappedToDos = mapToDoList(toDos, selectedToDoIndex, updateToDo)
   const parentToDo = findRootParentToDo(mappedToDos, selectedToDoIndex)
 
   if (!parentToDo) throw new Error('No parent found')
@@ -25,22 +25,35 @@ const mapToDoList = (
   toDos: ToDo[],
   selectedToDoIndex: string,
   updateToDo: (toDo: ToDo) => ToDo
-): { mappedToDos: ToDo[] } => {
+): ToDo[] => {
   const mappedToDos = toDos.map((toDo) => {
     if (toDo._id === selectedToDoIndex) {
       return updateToDo(toDo)
     } else if (toDo.children) {
-      const { mappedToDos } = mapToDoList(toDo.children, selectedToDoIndex, updateToDo)
+      const mappedToDos = mapToDoList(toDo.children, selectedToDoIndex, updateToDo)
       return { ...toDo, children: mappedToDos }
     }
 
     return toDo
   })
 
-  return { mappedToDos }
+  return mappedToDos
 }
 
-const findRootParentToDo = (toDos: ToDo[], selectedToDoIndex: string): ToDo | null => {
+export const filterToDoList = (toDos: ToDo[], selectedToDoIndex: string): ToDo[] => {
+  const filteredToDos = toDos.filter((toDo) => {
+    if (toDo._id === selectedToDoIndex) {
+      return false
+    } else if (toDo.children) {
+      toDo.children = filterToDoList(toDo.children, selectedToDoIndex)
+    }
+    return true
+  })
+
+  return filteredToDos
+}
+
+export const findRootParentToDo = (toDos: ToDo[], selectedToDoIndex: string): ToDo | null => {
   let rootParent: ToDo | null = null
 
   // eslint-disable-next-line no-constant-condition

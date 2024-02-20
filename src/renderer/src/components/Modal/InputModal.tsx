@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from 'react'
 import Input from '../Input'
 
 interface InputModalProps {
-  isOpen: boolean
+  isOpen?: boolean
+  defaultText?: string
   onClose: () => void
   onAccept: (input: string) => void
 }
 
-export default function InputModal({ isOpen, onClose, onAccept }: InputModalProps) {
-  const [input, setInput] = useState('')
+export default function InputModal({
+  isOpen = true,
+  defaultText = '',
+  onClose,
+  onAccept
+}: InputModalProps) {
+  const [input, setInput] = useState(defaultText)
 
   const closeModal = () => {
     onClose()
@@ -55,7 +61,7 @@ export default function InputModal({ isOpen, onClose, onAccept }: InputModalProp
                   className="text-lg text-center leading-6 text-white font-bold"
                   id="modal-headline"
                 >
-                  Create ToDo
+                  {defaultText ? 'Edit' : 'Create'} ToDo
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-center text-white">Write the title of your to do</p>

@@ -5,6 +5,7 @@ import {
   CreateToDo,
   CreateToDosWorkspaces,
   DeleteNote,
+  DeleteToDo,
   GetNotes,
   GetToDos,
   GetToDosWorkspaces,
@@ -130,7 +131,8 @@ enum ToDosRoutes {
   CREATE_TODO = 'createToDo',
   CREATE_NEW_TODO = 'createNewToDo',
   GET_TODOS = 'getToDos',
-  UPDATE_TODO = 'updateToDo'
+  UPDATE_TODO = 'updateToDo',
+  DELETE_TODO = 'deleteToDo'
 }
 
 const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
@@ -159,5 +161,9 @@ const toDosRoutesConfig = (ipcMain: Electron.IpcMain) => {
 
   ipcMain.handle(ToDosRoutes.UPDATE_TODO, (_, ...args: Parameters<UpdateToDo>) =>
     todosService.updateToDo(...args)
+  )
+
+  ipcMain.handle(ToDosRoutes.DELETE_TODO, (_, ...args: Parameters<DeleteToDo>) =>
+    todosService.deleteToDo(...args)
   )
 }

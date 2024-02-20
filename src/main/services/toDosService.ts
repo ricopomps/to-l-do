@@ -4,10 +4,12 @@ import {
   CreateNewToDo,
   CreateToDo,
   CreateToDosWorkspaces,
+  DeleteToDo,
   GetToDos,
   GetToDosWorkspaces,
   UpdateToDo
 } from '@shared/types'
+import { dialog } from 'electron'
 import { ensureDir } from 'fs-extra'
 import mongoose from 'mongoose'
 import FileService, { IFileService } from './fileService'
@@ -26,6 +28,8 @@ export interface IToDosService {
   getToDos: GetToDos
 
   updateToDo: UpdateToDo
+
+  deleteToDo: DeleteToDo
 }
 
 export default class ToDosService implements IToDosService {
@@ -147,5 +151,24 @@ export default class ToDosService implements IToDosService {
     )
 
     return updatedToDo
+  }
+
+  async deleteToDo(workspaceId: ToDoWorkspace['_id'], rootParentToDo: ToDo) {
+    const workspaceFolder = await this.getWorkspaceFolder(workspaceId)
+
+    const { response } = await dialog.showMessageBox({
+      type: 'warning',
+      title: 'Delete to do',
+      message: `Are you sure you want to delete the to do: '${rootParentToDo.title}'${rootParentToDo.children && rootParentToDo.children.length > 0 ? ' and its children' : ''}?`,
+      buttons: ['Delete', 'Cancel'], // 0 is Delete, 1 is Cancel
+      defaultId: 1,
+      cancelId: 1
+    })
+
+    if (response === 1) {
+      return
+    }
+
+    await this.fileService.deleteFile(workspaceFolder, `${rootParentToDo._id}.json`)
   }
 }

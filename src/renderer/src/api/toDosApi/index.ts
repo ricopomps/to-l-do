@@ -3,6 +3,7 @@ import {
   CreateNewToDo,
   CreateToDo,
   CreateToDosWorkspaces,
+  DeleteToDo,
   GetToDos,
   GetToDosWorkspaces,
   UpdateToDo
@@ -38,4 +39,11 @@ export const getToDos: GetToDos = async (workspaceId: ToDoWorkspace['_id']) => {
 
 export const updateToDo: UpdateToDo = async (workspaceId: ToDoWorkspace['_id'], toDo: ToDo) => {
   return await window.context.toDosApi.updateToDo(workspaceId, toDo)
+}
+
+export const deleteToDo: DeleteToDo = async (
+  workspaceId: ToDoWorkspace['_id'],
+  rootParentToDo: ToDo
+) => {
+  return await window.context.toDosApi.deleteToDo(workspaceId, rootParentToDo)
 }

@@ -1,3 +1,6 @@
+import ToDoContextMenu from '@/components/ContextMenu/ToDoContextMenu'
+import InputModal from '@/components/Modal/InputModal'
+import useToDosList from '@renderer/hooks/useToDosList'
 import {
   createChildrenToDoAtom,
   toggleCollapseToDoAtom,
@@ -8,7 +11,6 @@ import { ToDo } from '@shared/models/todo'
 import { useSetAtom } from 'jotai'
 import { Badge, BadgeCheck, ChevronDownCircle, ChevronUpCircle, PlusCircle } from 'lucide-react'
 import { ComponentProps, useState } from 'react'
-import InputModal from './Modal/InputModal'
 
 type ToDoProps = {
   toDo: ToDo
@@ -16,7 +18,10 @@ type ToDoProps = {
 } & ComponentProps<'div'>
 
 export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const { handleToDoselect } = useToDosList({})
+
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false)
+  const [contextMenu, setcontextMenu] = useState({ show: false, x: 0, y: 0 })
 
   const toggleCollapseToDo = useSetAtom(toggleCollapseToDoAtom)
   const toggleCompletedToDo = useSetAtom(toggleCompletedToDoAtom)
@@ -24,6 +29,17 @@ export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoPr
 
   const handleCreate = async (input: ToDo['title']) => {
     await createChildrenToDo(toDo._id, input)
+  }
+
+  const handleOpenContextMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
+    const { pageX, pageY } = e
+    setcontextMenu({ show: true, x: pageX, y: pageY })
+    handleToDoselect(toDo._id)()
+  }
+
+  const handleCloseContextMenu = () => {
+    setcontextMenu({ show: false, x: 0, y: 0 })
   }
 
   return (
@@ -38,6 +54,7 @@ export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoPr
           }
         )}
         {...props}
+        onContextMenu={handleOpenContextMenu}
       >
         <div className="flex gap-2">
           <div onClick={() => toggleCompletedToDo(toDo._id)}>
@@ -46,7 +63,7 @@ export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoPr
           <h3 className="font-bold truncate">{toDo.title}</h3>
         </div>
         <div className="flex gap-3">
-          <PlusCircle onClick={() => setIsOpen(true)} className="text-green-300" />
+          <PlusCircle onClick={() => setIsInputModalOpen(true)} className="text-green-300" />
           {toDo.children && toDo.children.length > 0 && (
             <div onClick={() => toggleCollapseToDo(toDo._id)}>
               {toDo.colapsed ? <ChevronUpCircle /> : <ChevronDownCircle />}
@@ -54,7 +71,12 @@ export default function ToDoPreview({ toDo, isActive = false, ...props }: ToDoPr
           )}
         </div>
       </div>
-      <InputModal isOpen={isOpen} onClose={() => setIsOpen(false)} onAccept={handleCreate} />
+      <InputModal
+        isOpen={isInputModalOpen}
+        onClose={() => setIsInputModalOpen(false)}
+        onAccept={handleCreate}
+      />
+      <ToDoContextMenu onCloseContextMenu={handleCloseContextMenu} {...contextMenu} toDo={toDo} />
     </>
   )
 }

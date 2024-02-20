@@ -2,6 +2,7 @@ import {
   createNewToDo,
   createToDo,
   createToDosWorkspaces,
+  deleteToDo,
   getToDos,
   getToDosWorkspaces,
   updateToDo
@@ -9,7 +10,7 @@ import {
 import { ToDo, ToDoWorkspace } from '@shared/models/todo'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
-import { completeAll, mapToDo } from './utils'
+import { completeAll, filterToDoList, findRootParentToDo, mapToDo } from './utils'
 
 const loadToDosWorkspaces = async () => {
   const workspaces = await getToDosWorkspaces()
@@ -49,24 +50,6 @@ export const createEmptyToDoAtom = atom(
     set(refreshCounter, (i) => i + 1)
   }
 )
-
-const selectedToDoAtomAsync = atom(async (get) => {
-  const selectedToDoIndex = get(selectedToDoIndexAtom)
-
-  if (selectedToDoIndex === null) return null
-
-  return emptyToDo //TODO: REMOVE
-})
-
-const emptyToDo: ToDo = {
-  _id: '',
-  workspaceId: '',
-  title: '',
-  lastEditTime: Date.now(),
-  createdAtTime: Date.now()
-}
-
-export const selectedToDoAtom = unwrap(selectedToDoAtomAsync, (prev) => prev ?? emptyToDo)
 
 export const toggleCollapseToDoAtom = atom(null, async (get, set, selectedToDoIndex: string) => {
   const workspace = get(selectedToDoWorkspaceAtom)
@@ -157,3 +140,40 @@ export const selectedToDoWorkspaceAtom = unwrap(
   (prev) => prev ?? null
 )
 const refreshCounter = atom(0)
+
+export const updateToDoTitleAtom = atom(
+  null,
+  async (get, set, selectedToDoIndex: string, title: string) => {
+    const workspace = get(selectedToDoWorkspaceAtom)
+
+    if (!workspace) return
+    const updateToDoFunction = (toDo: ToDo) => {
+      return { ...toDo, title }
+    }
+
+    const { parentToDo } = mapToDo(workspace.toDos, selectedToDoIndex, updateToDoFunction)
+
+    await updateToDo(parentToDo.workspaceId, parentToDo)
+
+    set(refreshCounter, (i) => i + 1)
+  }
+)
+
+export const deleteToDoAtom = atom(null, async (get, set, selectedToDoIndex: string) => {
+  const workspace = get(selectedToDoWorkspaceAtom)
+  if (!workspace) return
+
+  const rootParentToDo = findRootParentToDo(workspace.toDos, selectedToDoIndex)
+  if (!rootParentToDo) return
+
+  const isParentToDo = rootParentToDo._id === selectedToDoIndex
+
+  if (isParentToDo) {
+    await deleteToDo(rootParentToDo.workspaceId, rootParentToDo)
+  } else {
+    filterToDoList(workspace.toDos, selectedToDoIndex)
+    await updateToDo(rootParentToDo.workspaceId, rootParentToDo)
+  }
+
+  set(refreshCounter, (i) => i + 1)
+})

@@ -5,6 +5,7 @@ import {
   CreateToDo,
   CreateToDosWorkspaces,
   DeleteNote,
+  DeleteToDo,
   GetNotes,
   GetToDos,
   GetToDosWorkspaces,
@@ -32,6 +33,7 @@ declare global {
         createNewToDo: CreateNewToDo
         getToDos: GetToDos
         updateToDo: UpdateToDo
+        deleteToDo: DeleteToDo
       }
     }
   }
